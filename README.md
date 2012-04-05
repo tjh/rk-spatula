@@ -1,6 +1,6 @@
 # Description
 
-Library for scraping RunKeeper.com data for (please use responsibly)
+Library for scraping RunKeeper.com data (please use responsibly)
 
 # Examples
 
