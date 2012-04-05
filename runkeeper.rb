@@ -46,11 +46,7 @@ module Runkeeper
     def self.find_and_parse_cached_activities_page(user_name)
       return if !FileTest.exists? cache_file_name(user_name)
 
-      file = File.open cache_file_name(user_name)
-      doc = Nokogiri::XML(file)
-      file.close
-
-      doc
+      Nokogiri::XML(IO.read(cache_file_name(user_name)))
     end
 
     # Connect to the web site, scraping the HTML for the user's
@@ -66,14 +62,16 @@ module Runkeeper
 
       raw_html = open(url_for_user(user_name)).read
 
-      # Cache the raw HTML
-      file = File.new cache_file_name(user_name), 'w'
-      file.write(raw_html)
-      file.close
+      cache_file(cache_file_name(user_name), raw_html)
 
-      doc = Nokogiri::HTML(raw_html)
+      Nokogiri::HTML(raw_html)
+    end
 
-      doc
+    def self.cache_file(path, contents)
+      FileUtils.mkdir_p(File.dirname(path))
+      File.open(path, 'w') do |file|
+        file.write(contents)
+      end
     end
 
     # Get the url for a single user's activities
@@ -165,11 +163,7 @@ module Runkeeper
       def find_and_parse_cached_activity_page
         return if !FileTest.exists? cache_file_name
 
-        file = File.open cache_file_name
-        doc = Nokogiri::XML(file)
-        file.close
-
-        doc
+        Nokogiri::XML(IO.read(cache_file_name))
       end
 
       # Connect to the web site, pulling the HTML for the activity
@@ -181,9 +175,7 @@ module Runkeeper
         raw_html = open(url).read
 
         # Cache the raw HTML
-        file = File.new cache_file_name, 'w'
-        file.write(raw_html)
-        file.close
+        self.class.cache_file(cache_file_name, raw_html)
 
         doc = Nokogiri::HTML(raw_html)
 
