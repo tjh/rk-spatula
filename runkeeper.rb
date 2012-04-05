@@ -172,18 +172,16 @@ module Runkeeper
       def open_url_and_cache_activity_page
         puts "   Downloading the activity on #{path}"
 
+        # Be a good Net citizen and wait 1 second so we don't pound
+        # their web site repeatedly
+        sleep 1
+
         raw_html = open(url).read
 
         # Cache the raw HTML
         self.class.cache_file(cache_file_name, raw_html)
 
-        doc = Nokogiri::HTML(raw_html)
-
-        # Be a good Net citizen and wait 1 second so we don't pound
-        # their web site repeatedly
-        sleep 1
-
-        doc
+        Nokogiri::HTML(raw_html)
       end
 
       # Get the url for a single user's activities
