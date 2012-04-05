@@ -67,6 +67,8 @@ module Runkeeper
       Nokogiri::HTML(raw_html)
     end
 
+    # Stores contents at path, completely overwriting the previous
+    # file. Automatically creates any directories needed.
     def self.cache_file(path, contents)
       FileUtils.mkdir_p(File.dirname(path))
       File.open(path, 'w') do |file|
